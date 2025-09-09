@@ -1,0 +1,69 @@
+from sqlalchemy import false
+from sqlalchemy.orm import Session
+
+from app.models.parametro_hijo import ParametroHijo 
+
+class Parametro_hijo_repository:
+    def __init__(self, db: Session) -> None:
+        self.db = db
+
+    def create(self, *, parametro_id: int, nombre: str, descripcion: str, estado: bool) -> ParametroHijo:
+        hijo = ParametroHijo(parametro_id= parametro_id , nombre= nombre, descripcion = descripcion, estado= estado)
+        self.db.add(hijo)
+        self.db.commit()
+        self.db.refresh(hijo)
+        return hijo
+
+
+    def obtener_id(self, id_parametro_hijo: int) -> ParametroHijo | None:
+        return self.db.get(ParametroHijo, id_parametro_hijo)
+
+    def list(self, *, skip: int = 0, limit: int = 1000) -> list[ParametroHijo]:
+        return (
+            self.db.query(ParametroHijo)  # type: ignore[attr-defined]
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def update(self, id_parametro_hijo: int, *, parametro_id: int, nombre: str | None, descripcion: str | None, estado: bool | None) -> ParametroHijo | None:
+        hijo = self.get(id_parametro_hijo)
+        if hijo is None:
+            return None
+        if parametro_id is not None:
+            hijo.parametro_id = parametro_id
+        if nombre is not None:
+            hijo.nombre = nombre
+        if descripcion is not None:
+            hijo.descripcion = descripcion
+        if estado is not None:
+            hijo.estado = estado
+        self.db.commit()
+        self.db.refresh(hijo)
+        return hijo
+  
+
+    def delete(self, id_parametro_hijo: int) -> bool:
+        hijo = self.get(id_parametro_hijo)
+        if hijo is None:
+            return False
+        self.db.delete(hijo)
+        self.db.commit()
+        return True
+
+    def papa(self, parametro_id: int) -> list[ParametroHijo]:
+        return (
+        self.db.query(ParametroHijo)
+        .filter(ParametroHijo.parametro_id == parametro_id)
+        .all()
+        )
+
+    def cambiar_estado(self, id_parametro_hijo: int) -> bool:
+        hijo = self.obtener_id(id_parametro_hijo)
+        if hijo is None:
+            return False  # ID no existe, no se puede cambiar el estado
+        
+        hijo.estado = not hijo.estado  # invierte el valor actual
+        self.db.commit()
+        self.db.refresh(hijo)
+        return True
