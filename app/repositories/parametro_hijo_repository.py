@@ -1,9 +1,10 @@
-from sqlalchemy import false
+from typing import List
 from sqlalchemy.orm import Session
 
-from app.models.parametro_hijo import ParametroHijo 
+from app.models.parametro_hijo import ParametroHijo
 
-class Parametro_hijo_repository:
+
+class ParametroHijoRepository:
     def __init__(self, db: Session) -> None:
         self.db = db
 
@@ -18,7 +19,7 @@ class Parametro_hijo_repository:
     def obtener_id(self, id_parametro_hijo: int) -> ParametroHijo | None:
         return self.db.get(ParametroHijo, id_parametro_hijo)
 
-    def list(self, *, skip: int = 0, limit: int = 1000) -> list[ParametroHijo]:
+    def list(self, *, skip: int = 0, limit: int = 1000) -> List[ParametroHijo]:
         return (
             self.db.query(ParametroHijo)  # type: ignore[attr-defined]
             .offset(skip)
@@ -27,7 +28,7 @@ class Parametro_hijo_repository:
         )
 
     def update(self, id_parametro_hijo: int, *, parametro_id: int, nombre: str | None, descripcion: str | None, estado: bool | None) -> ParametroHijo | None:
-        hijo = self.get(id_parametro_hijo)
+        hijo = self.obtener_id(id_parametro_hijo)
         if hijo is None:
             return None
         if parametro_id is not None:
@@ -44,14 +45,14 @@ class Parametro_hijo_repository:
   
 
     def delete(self, id_parametro_hijo: int) -> bool:
-        hijo = self.get(id_parametro_hijo)
+        hijo = self.obtener_id(id_parametro_hijo)
         if hijo is None:
             return False
         self.db.delete(hijo)
         self.db.commit()
         return True
 
-    def papa(self, parametro_id: int) -> list[ParametroHijo]:
+    def papa(self, parametro_id: int) -> List[ParametroHijo]:
         return (
         self.db.query(ParametroHijo)
         .filter(ParametroHijo.parametro_id == parametro_id)
@@ -61,9 +62,8 @@ class Parametro_hijo_repository:
     def cambiar_estado(self, id_parametro_hijo: int) -> bool:
         hijo = self.obtener_id(id_parametro_hijo)
         if hijo is None:
-            return False  # ID no existe, no se puede cambiar el estado
-        
-        hijo.estado = not hijo.estado  # invierte el valor actual
+            return False
+        hijo.estado = not hijo.estado
         self.db.commit()
         self.db.refresh(hijo)
         return True

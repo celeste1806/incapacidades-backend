@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy.orm import Session
 
 from app.repositories.parametro_repository import ParametroRepository
@@ -20,7 +21,7 @@ class ParametroService:
         entity = self.repo.get(id_parametro)
         return None if entity is None else ParametroOut.model_validate(entity)
 
-    def list(self, skip: int = 0, limit: int = 100) -> list[ParametroOut]:
+    def list(self, skip: int = 0, limit: int = 100) -> List[ParametroOut]:
         items = self.repo.list(skip=skip, limit=limit)
         return [ParametroOut.model_validate(x) for x in items]
 

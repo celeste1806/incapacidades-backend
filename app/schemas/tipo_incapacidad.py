@@ -1,26 +1,26 @@
 from pydantic import BaseModel, Field
 
 
-class ParametroHijoBase(BaseModel):
-    parametro_id: int
+class TipoIncapacidadBase(BaseModel):
+    id_tipo_incapacidad: int
     nombre: str = Field(min_length=1, max_length=150)
     descripcion: str | None = Field(default=None, max_length=255)
     estado: bool = True
 
 
-class ParametroHijoCreate(ParametroHijoBase):
+class TipoIncapacidadCreate(TipoIncapacidadBase):
     pass
 
 
-class ParametroHijoUpdate(BaseModel):
-    parametro_id: int | None = Field(default=None)
+class TipoIncapacidadUpdate(BaseModel):
+    id_tipo_incapacidad: int | None = Field(default=None)
     nombre: str | None = Field(default=None, min_length=1, max_length=150)
     descripcion: str | None = Field(default=None, max_length=255)
     estado: bool | None = None
 
 
-class ParametroHijoOut(ParametroHijoBase):
-    id_parametrohijo: int
+class TipoIncapacidadOut(TipoIncapacidadBase):
+    id_tipo_incapacidad: int
 
     class Config:
         from_attributes = True

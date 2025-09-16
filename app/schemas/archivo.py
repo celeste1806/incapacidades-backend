@@ -1,26 +1,24 @@
 from pydantic import BaseModel, Field
 
 
-class ParametroHijoBase(BaseModel):
-    parametro_id: int
+class ArchivoBase(BaseModel):
     nombre: str = Field(min_length=1, max_length=150)
     descripcion: str | None = Field(default=None, max_length=255)
     estado: bool = True
 
 
-class ParametroHijoCreate(ParametroHijoBase):
+class ArchivoCreate(ArchivoBase):
     pass
 
 
-class ParametroHijoUpdate(BaseModel):
-    parametro_id: int | None = Field(default=None)
+class ArchivoUpdate(BaseModel):
     nombre: str | None = Field(default=None, min_length=1, max_length=150)
     descripcion: str | None = Field(default=None, max_length=255)
     estado: bool | None = None
 
 
-class ParametroHijoOut(ParametroHijoBase):
-    id_parametrohijo: int
+class ArchivoOut(ArchivoBase):
+    id_archivo: int
 
     class Config:
         from_attributes = True

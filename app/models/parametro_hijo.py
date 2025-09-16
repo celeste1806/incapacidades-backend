@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Integer, String
+from sqlalchemy import Boolean, Integer, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 
@@ -9,7 +9,7 @@ class ParametroHijo(Base):
 
     id_parametrohijo:Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     parametro_id:Mapped[int] = mapped_column(Integer, ForeignKey("parametro.id_parametro"))
-    nombre:Mapped[str] = mapped_column(String(50), nullable=False)
-    descripcion:Mapped[str] = mapped_column(String(50), nullable=False)
+    nombre:Mapped[str] = mapped_column(String(150), nullable=False)
+    descripcion:Mapped[str | None] = mapped_column(String(255), nullable=True)
     estado:Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 

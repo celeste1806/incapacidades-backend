@@ -4,7 +4,12 @@ from sqlalchemy.orm import sessionmaker
 from app.config.settings import DATABASE_URL
 
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+# Timeout corto para evitar bloqueos en arranque si la BD no responde
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    connect_args={"connect_timeout": 5} if DATABASE_URL.startswith("mysql+") else {},
+)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 
